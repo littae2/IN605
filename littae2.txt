@@ -1,0 +1,81 @@
+SELECT title, genre 
+FROM Book 
+WHERE author = "Harper Lee";
+
+SELECT DISTINCT published 
+FROM Book 
+INNER JOIN Rating ON Book.bID = Rating.bID 
+WHERE ratings>=4 
+ORDER BY published ASC;
+
+SELECT name , Book.title 
+FROM Reviewer 
+INNER JOIN Rating ON Rating.rID= Reviewer.rID 
+INNER JOIN Book ON Book.bID = Rating.bID 
+WHERE Book.title = "To Kill a Mocking Bird";
+
+SELECT name 
+FROM Reviewer
+INNER JOIN Rating ON Rating.rID = Reviewer.rID 
+WHERE Rating.ratingDate IS NULL;
+
+SELECT author , title, Rating.ratings 
+FROM Book 
+INNER JOIN Rating ON Book.bID= Rating.bID 
+INNER JOIN Reviewer ON Rating.rID =Reviewer.rID 
+WHERE Reviewer.name=author;
+
+SELECT Reviewer.name AS "Reviewer name" , Book.title AS "Book title", ratings, ratingDate AS "Date Rated" 
+FROM Rating 
+INNER JOIN Reviewer ON Reviewer.rID=Rating.rID 
+INNER JOIN Book ON Book.bID = Rating.bID 
+ORDER BY Reviewer.name, Book.title, ratings;
+
+SELECT Reviewer.name , Book.title 
+FROM Rating 
+INNER JOIN Reviewer ON Reviewer.rID = Rating.rID 
+INNER JOIN Book ON Book.bID= Rating.bID having count(*); 
+
+SELECT title, max(Rating.ratings) 
+FROM Book 
+INNER JOIN Rating ON Rating.bID = Book.bID 
+GROUP BY (title) ;
+
+
+SELECT DISTINCT Book.title, Max(ratings)-Min(ratings) As "ratingSpread" 
+FROM Rating 
+INNER JOIN Book ON Rating.bID = Book.bID  
+GROUP BY Book.title 
+ORDER BY ratingSpread DESC;
+
+INSERT INTO Reviewer (name, rID) VALUES ("John Green", 209);
+
+INSERT INTO Rating (bID, rID, ratings) VALUES(101,202, 5),(102,202,5),(103,202,5), (104,202,5),(105,202,5),(106,202,5),(107,202,5),(108,202,5);
+
+SELECT Rating.rID, bID, ratings, ratingDate 
+FROM Rating 
+INNER JOIN Reviewer ON Reviewer.rID=Rating.rID
+WHERE Rating.rID=202 && ratings =5 && ratingDate IS NULL;
+
+
+UPDATE Book 
+INNER JOIN Rating ON Rating.bID= Book.bID
+Set Book.published =(Book.published+25)
+WHERE (SELECT Avg(Rating.ratings)FROM Rating )>=4;
+
+
+SELECT Book.bID, title, published
+FROM Book
+INNER JOIN Rating  ON Rating.bID= Book.bID GROUP BY Book.bID;
+
+Update Book
+INNER JOIN Rating as R ON R.bID =Book.bID
+Set Book.published =Book.published+25
+WHERE (SELECT Avg(R.ratings))>=4;
+
+SELECT Book.bID, title, published
+FROM Book
+INNER JOIN Rating  ON Rating.bID= Book.bID GROUP BY Book.bID;
+
+DELETE Rating FROM Rating INNER JOIN Book ON Book.bID=Rating.bID
+WHERE ((Book.published >2000) || (Book.published<1970)) && Rating.ratings<4;
